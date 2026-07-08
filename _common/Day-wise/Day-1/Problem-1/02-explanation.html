@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Duplicate & Missing Badge Problem</title>
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/black.css">
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Slide 1: The Mix-Up -->
+        <section data-transition="zoom">
+          <h2>The Mix-Up</h2>
+          <p>Badges: 1, 2, 2, 4, 5</p>
+          <p>Find the duplicate and the missing!</p>
+        </section>
+
+        <!-- Slide 2: Deconstructing the Problem -->
+        <section data-transition="fade">
+          <h2>Deconstructing the Problem</h2>
+          <ul>
+            <li>Roster: 1 to n</li>
+            <li>Input: list of n numbers</li>
+            <li>Glitch: one duplicate, one missing</li>
+            <li>Output: [Duplicate] [Missing]</li>
+          </ul>
+        </section>
+
+        <!-- Slide 3: Human Approach -->
+        <section data-transition="convex">
+          <h2>The Human Approach</h2>
+          <p>Clipboard tally marks for each badge.</p>
+          <ul>
+            <li>Badge 1 → Slot 1</li>
+            <li>Badge 2 → Slot 2</li>
+            <li>Badge 2 again → Slot 2 (Duplicate!)</li>
+            <li>Badge 4 → Slot 4</li>
+            <li>Badge 5 → Slot 5</li>
+            <li>Slot 3 empty → Missing!</li>
+          </ul>
+        </section>
+
+        <!-- Slide 4: Clipboard vs Computer -->
+        <section data-transition="zoom-in fade-out">
+          <h2>Clipboard → Computer</h2>
+          <p>Clipboard = Frequency Array</p>
+          <p>Original: [1,2,2,4,5]</p>
+          <p>Tally Array: [0,0,0,0,0,0]</p>
+        </section>
+
+        <!-- Slide 5: Dry Run -->
+        <section>
+          <section data-transition="zoom">
+            <h2>Step-by-Step Dry Run</h2>
+          </section>
+          <section data-transition="zoom-in fade-out">
+            <table>
+              <tr><th>Step</th><th>Badge</th><th>Tally Slot</th><th>Array</th></tr>
+              <tr><td>1</td><td>1</td><td>1</td><td>[0,1,0,0,0,0]</td></tr>
+              <tr><td>2</td><td>2</td><td>2</td><td>[0,1,1,0,0,0]</td></tr>
+              <tr><td>3</td><td>2</td><td>2</td><td>[0,1,2,0,0,0]</td></tr>
+              <tr><td>4</td><td>4</td><td>4</td><td>[0,1,2,0,1,0]</td></tr>
+              <tr><td>5</td><td>5</td><td>5</td><td>[0,1,2,0,1,1]</td></tr>
+            </table>
+          </section>
+        </section>
+
+        <!-- Slide 6: Gathering the Report -->
+        <section data-transition="convex">
+          <h2>Gathering the Report</h2>
+          <ul>
+            <li>Slot 2 → Count 2 → Duplicate</li>
+            <li>Slot 3 → Count 0 → Missing</li>
+          </ul>
+          <p><strong>Output: 2 3</strong></p>
+        </section>
+
+        <!-- Slide 7: Algorithm Logic -->
+        <section data-transition="fade">
+          <h2>Algorithm Logic</h2>
+          <pre><code>
+1. Create tally[n+1] = 0
+2. For each badge:
+     tally[badge]++
+3. Scan tally:
+     if count==2 → duplicate
+     if count==0 → missing
+4. Print duplicate, missing
+          </code></pre>
+        </section>
+
+        <!-- Slide 8: Reality Check -->
+        <section data-transition="slide">
+          <h2>Reality Check</h2>
+          <ul>
+            <li>Time: O(N) → Fast</li>
+            <li>Space: O(N) → Needs extra array</li>
+          </ul>
+          <p>Perfect for beginners!</p>
+        </section>
+
+        <!-- Slide 9: Interview Connection -->
+        <section data-transition="convex">
+          <h2>Interview Connection</h2>
+          <p>This is a classic coding interview problem.</p>
+          <p>Practice dry runs + explain logic clearly.</p>
+        </section>
+
+        <!-- Slide 10: Motivation -->
+        <section data-transition="zoom">
+          <h2>Keep Revising!</h2>
+          <p>Anchor logic in real-world actions → then code.</p>
+        </section>
+
+      </div>
+    </div>
+    <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+    <script>
+      Reveal.initialize({
+        transition: 'slide',
+        backgroundTransition: 'fade',
+        controls: true,
+        progress: true,
+        history: true,
+        center: true
+      });
+    </script>
+  </body>
+</html>
