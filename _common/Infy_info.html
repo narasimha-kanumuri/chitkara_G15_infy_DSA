@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infosys DSA Bootcamp Poster</title>
+<style>
+:root {
+    --header-bg: linear-gradient(135deg, #2b5396 0%, #2b7696d1 100%);
+    --header-text: #ffffff;
+    --header-text-secondary: #e6f0f5;
+    --header-description: #edf5fa;
+    --page-bg: #f5f9fc;
+    --page-bg-alt: #ffffff;
+    --text-primary: #1a2b3c;
+    --text-secondary: #2f455c;
+    --text-muted: #4f5f6f;
+    --brand: #2d7a9f;
+    --brand-hover: #2b7696;
+    --accent-bg: #e6f3fa;
+    --accent: #2d7a9f;
+    --border: #d0dbe5;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --header-bg: linear-gradient(135deg, #2b5396 0%, #2b7696d1 100%);
+        --header-text: #ffffff;
+        --header-text-secondary: #cfdbe4;
+        --header-description: #d8e5ed;
+        --page-bg: #121a23;
+        --page-bg-alt: #18242f;
+        --text-primary: #e8f0f7;
+        --text-secondary: #c5d3df;
+        --text-muted: #9fb2c4;
+        --brand: #5bb8e6;
+        --brand-hover: #4aa1c7;
+        --accent-bg: #1f2e3a;
+        --accent: #5bb8e6;
+        --border: #2f4354;
+    }
+}
+body {margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:var(--page-bg);color:var(--text-primary);} 
+.poster-container {max-width:1100px;margin:0 auto;background:var(--page-bg-alt);border-radius:32px;box-shadow:0 8px 32px rgba(58,143,183,0.12);overflow:hidden;}
+header {background:var(--header-bg);color:var(--header-text);text-align:center;padding:56px 32px 40px;}
+.header-title {font-size:48px;font-weight:900;margin-bottom:10px;}
+.header-subtitle {font-size:22px;color:var(--header-text-secondary);}
+.header-description {font-size:16px;max-width:700px;margin:0 auto;color:var(--header-description);} 
+.main-content {display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:24px;}
+.column {display:flex;flex-direction:column;gap:20px;}
+.card {background:var(--accent-bg);border:1px solid var(--border);border-radius:18px;padding:16px;}
+.section-title {font-weight:700;margin-bottom:10px;color:var(--text-primary);} 
+.stat-grid {display:flex;flex-wrap:wrap;gap:16px;}
+.stat-card {flex:1 1 45%;background:var(--page-bg);border:1px solid var(--border);border-radius:18px;padding:16px;text-align:center;}
+.stat-number {font-size:28px;font-weight:800;color:var(--accent);} 
+.stat-label {font-size:13px;color:var(--text-muted);} 
+ul {padding-left:18px;color:var(--text-secondary);} 
+ul li {margin-bottom:8px;} 
+.timeline {border-left:3px solid var(--brand);padding-left:16px;display:flex;flex-direction:column;gap:16px;} 
+.timeline-item {position:relative;padding-left:10px;} 
+.timeline-item::before {content:'';position:absolute;left:-22px;top:4px;width:12px;height:12px;background:var(--brand);border-radius:50%;}
+.timeline-title {font-weight:700;color:var(--text-primary);} 
+.chart-bar {display:flex;flex-direction:column;gap:8px;} 
+.bar {height:14px;background:var(--accent);border-radius:8px;} 
+.bar-label {font-size:13px;color:var(--text-secondary);} 
+@media (max-width: 768px) {
+    .main-content {grid-template-columns: 1fr;}
+    * {overflow-wrap: anywhere;}
+}
+:root {
+    /* Light Mode Colors */
+    --header-bg: linear-gradient(135deg, #2b5396 0%, #2b7696d1 100%);
+    --header-text: #ffffff;
+    --header-text-secondary: #eaf4f9;
+    --header-description: #eff7fc;
+    --page-bg: #f5f9fc;
+    --page-bg-alt: #ffffff;
+    --text-primary: #1a2b3c;
+    --text-secondary: #2f455c;
+    --text-muted: #4f5f6f;
+    --brand: #2d7a9f;
+    --brand-hover: #2b7696;
+    --accent-bg: #e6f3fa;
+    --accent: #2d7a9f;
+    --border: #d0dbe5;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark Mode Colors */
+        --header-bg: linear-gradient(135deg, #2b5396 0%, #2b7696d1 100%);
+        --header-text: #ffffff;
+        --header-text-secondary: #cfdbe4;
+        --header-description: #d8e5ed;
+        --page-bg: #121a23;
+        --page-bg-alt: #18242f;
+        --text-primary: #e8f0f7;
+        --text-secondary: #c5d3df;
+        --text-muted: #9fb2c4;
+        --brand: #5bb8e6;
+        --brand-hover: #4aa1c7;
+        --accent-bg: #1f2e3a;
+        --accent: #5bb8e6;
+        --border: #2f4354;
+    }
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'SF Pro Display', 'SF Pro', sans-serif;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+.poster-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--page-bg-alt);
+    border-radius: 32px;
+    box-shadow: 0 8px 32px rgba(58,143,183,0.12);
+    padding: 0;
+    overflow: hidden;
+}
+header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    text-align: center;
+    padding: 56px 32px 40px 32px;
+    position: relative;
+}
+.header-title {
+    font-size: clamp(40px, 6vw, 60px);
+    font-weight: 900;
+    margin-bottom: 12px;
+    letter-spacing: 0.01em;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.08);
+}
+.header-subtitle {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--header-text-secondary);
+}
+.header-description {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 32px;
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--header-description);
+}
+/* Stat Card Component */
+.stat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+}
+.stat-card {
+    flex: 1 1 45%;
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    text-align: center;
+}
+.stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent);
+}
+.stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+/* Timeline Component - Dual-Layer Glowing Dot Style */
+.timeline {
+    border-left: 3px solid var(--brand);
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.timeline-item {
+    position: relative;
+    padding-left: 12px;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 4px;
+    width: 15px;
+    height: 15px;
+    background: var(--brand);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 4px var(--page-bg-alt),
+        0 0 0 8px var(--accent-bg);
+}
+.timeline-title {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-size: 16px;
+}
+.timeline-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 15px;
+}
+@media (forced-colors: active) {
+  header { background: Canvas; color: CanvasText; }
+  .poster-container,
+  .stat-card { background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
+  .timeline { border-left: 2px solid CanvasText; }
+  .timeline-item::before {
+    background: CanvasText;
+    box-shadow: none;
+    border: 1px solid Canvas;
+  }
+}
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    * {
+        overflow-wrap: anywhere;
+    }
+}
+</style>
+</head>
+<body>
+<div class="poster-container">
+<header>
+<h1 class="header-title">Infosys DSA Bootcamp Blueprint</h1>
+<div class="header-subtitle">26-Hour High-Yield Placement Strategy</div>
+<div class="header-description">Focused training plan optimized for Infosys coding rounds with real topic distribution and mock flexibility.</div>
+</header>
+<div class="main-content">
+<div class="column">
+<div class="card">
+<h2 class="section-title">Key Insights</h2>
+<ul>
+<li><strong>Arrays & Strings dominate</strong> (~28%) and drive early question success</li>
+<li><strong>Dynamic Programming</strong> (~20%) typically forms hardest problems</li>
+<li><strong>Round formats vary</strong> (3 coding OR 2 coding + MCQ)</li>
+<li><strong>Goal:</strong> Solve 2 problems reliably, attempt 3rd</li>
+</ul>
+</div>
+<div class="card">
+<h2 class="section-title">Topic Weight Distribution</h2>
+<div class="chart-bar">
+<div class="bar-label">Arrays & Strings (28%)</div>
+<div class="bar" style="width:90%"></div>
+<div class="bar-label">Dynamic Programming (20%)</div>
+<div class="bar" style="width:70%"></div>
+<div class="bar-label">Linked List (12%)</div>
+<div class="bar" style="width:50%"></div>
+<div class="bar-label">Trees (10%)</div>
+<div class="bar" style="width:45%"></div>
+<div class="bar-label">Graphs (6%)</div>
+<div class="bar" style="width:30%"></div>
+</div>
+</div>
+<div class="card">
+<h2 class="section-title">Bootcamp Structure</h2>
+<div class="timeline">
+<div class="timeline-item"><div class="timeline-title">Sessions 1–4</div><div>Arrays, Strings, Searching</div></div>
+<div class="timeline-item"><div class="timeline-title">Sessions 5–8</div><div>Recursion, Stacks, Linked List, Greedy</div></div>
+<div class="timeline-item"><div class="timeline-title">Sessions 9–11</div><div>Trees + Graph Basics</div></div>
+<div class="timeline-item"><div class="timeline-title">Sessions 12–13</div><div>Dynamic Programming</div></div>
+<div class="timeline-item"><div class="timeline-title">Sessions 14–17</div><div>Story Problems + Mocks</div></div>
+</div>
+</div>
+</div>
+<div class="column">
+<div class="card">
+<h2 class="section-title">Program Metrics</h2>
+<div class="stat-grid">
+<div class="stat-card"><div class="stat-number">17</div><div class="stat-label">Core Sessions</div></div>
+<div class="stat-card"><div class="stat-number">51</div><div class="stat-label">Curated Problems</div></div>
+<div class="stat-card"><div class="stat-number">2</div><div class="stat-label">Mock Formats</div></div>
+<div class="stat-card"><div class="stat-number">26h</div><div class="stat-label">Total Duration</div></div>
+</div>
+</div>
+<div class="card">
+<h2 class="section-title">Teaching Strategy</h2>
+<ul>
+<li><strong>Two-lane learning</strong>: Core vs Stretch students</li>
+<li><strong>Brute → Optimal</strong> problem solving approach</li>
+<li><strong>Timed practice</strong> to simulate real rounds</li>
+<li><strong>Error tracking</strong> for repeated mistakes</li>
+</ul>
+</div>
+<div class="card">
+<h2 class="section-title">Mock Strategy</h2>
+<ul>
+<li><strong>Format A:</strong> 3 coding questions (Easy → Hard)</li>
+<li><strong>Format B:</strong> 2 coding + MCQs</li>
+<li><strong>Focus:</strong> Accuracy over coverage</li>
+<li><strong>Include:</strong> DP handwritten practice (LCS)</li>
+</ul>
+</div>
+<div class="card">
+<h2 class="section-title">Top Priorities</h2>
+<ul>
+<li><strong>Pattern recognition</strong> in story problems</li>
+<li><strong>Strong fundamentals</strong> in arrays & DP</li>
+<li><strong>Speed + accuracy</strong> under time pressure</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
