@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today: Learning How Recursion Asks Questions</title>
+  
+  <!-- Reveal.js CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+  
+  <!-- Tailwind CSS for modern layout/styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom theme overrides -->
+  <style>
+    :root {
+      --r-background-color: #090d16;
+      --r-main-font: 'Inter', sans-serif;
+      --r-heading-font: 'Inter', sans-serif;
+      --r-link-color: #10b981;
+      --r-link-color-hover: #34d399;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+    }
+
+    .reveal .slides section {
+      text-align: left;
+      height: 100%;
+    }
+
+    /* Glassmorphism card utility */
+    .glass-card {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+    }
+
+    /* Custom scrollbars inside notes */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.3);
+      border-radius: 3px;
+    }
+
+    /* Live simulator styling */
+    .tree-node {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .duplicate-highlight {
+      animation: pulse-orange 1.5s infinite alternate;
+      border-color: #f97316 !important;
+      background-color: rgba(249, 115, 22, 0.15) !important;
+      color: #ffedd5 !important;
+      transform: scale(1.1);
+    }
+    @keyframes pulse-orange {
+      0% { box-shadow: 0 0 0 0px rgba(249, 115, 22, 0.4); }
+      100% { box-shadow: 0 0 20px 8px rgba(249, 115, 22, 0.8); }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="overflow-hidden">
+
+  <!-- Floating Delivery Script Overlay (Only visible when toggled) -->
+  <div id="script-overlay" class="fixed bottom-4 left-4 z-50 glass-card p-4 max-w-lg w-full transition-all duration-300 transform translate-y-full opacity-0 pointer-events-none shadow-2xl">
+    <div class="flex justify-between items-center mb-2 border-b border-white/10 pb-2">
+      <h4 class="text-emerald-400 font-bold tracking-wider text-xs uppercase flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        Delivery Prompt / Script
+      </h4>
+      <button onclick="toggleScript()" class="text-gray-400 hover:text-white transition text-xs bg-white/5 px-2 py-1 rounded">Hide [H]</button>
+    </div>
+    <div id="script-content" class="text-xs text-gray-300 max-h-48 overflow-y-auto custom-scroll leading-relaxed space-y-2">
+      <!-- Content loaded dynamically based on current slide index -->
+    </div>
+  </div>
+
+  <!-- Custom Floating Control Panel -->
+  <div class="fixed top-4 right-4 z-40 flex items-center gap-3">
+    <button onclick="toggleScript()" class="glass-card hover:bg-white/10 text-emerald-400 font-semibold text-xs px-3 py-2 flex items-center gap-2 transition duration-200 shadow-lg cursor-pointer">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span>Show Script Guide <kbd class="bg-gray-800 text-[10px] px-1 rounded ml-1 text-gray-400">H</kbd></span>
+    </button>
+  </div>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Slide 1: What Did We Learn Today? -->
+      <section data-auto-animate data-background-transition="zoom" class="flex flex-col justify-center px-12">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full py-8">
+          <div class="lg:col-span-5 space-y-6">
+            <span class="text-xs font-bold tracking-widest text-emerald-400 uppercase bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20 inline-block">Today's Recap</span>
+            <h1 class="text-5xl lg:text-6xl font-black text-white leading-tight" data-id="main-title">
+              Learning How Recursion <br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Asks Questions</span>
+            </h1>
+            <p class="text-sm text-gray-400 leading-relaxed max-w-md">
+              Today we did not try to optimize recursion or focus on execution speed. Our mission was absolute clarity.
+            </p>
+          </div>
+
+          <div class="lg:col-span-7 glass-card p-8 relative overflow-hidden flex flex-col justify-between" data-id="content-box">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <h3 class="text-white font-bold text-lg mb-6 border-b border-white/5 pb-3 flex items-center gap-2">
+              <span class="text-emerald-400">#</span> The 5 Questions We Now Master
+            </h3>
+            <ol class="space-y-4">
+              <li class="flex items-start gap-4 transition hover:translate-x-2 duration-200">
+                <span class="flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold text-xs h-6 w-6 rounded-full shrink-0">1</span>
+                <div>
+                  <h4 class="text-white text-sm font-semibold">What does the function mean?</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Defining its semantic job in clear, simple English before code.</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-4 transition hover:translate-x-2 duration-200">
+                <span class="flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold text-xs h-6 w-6 rounded-full shrink-0">2</span>
+                <div>
+                  <h4 class="text-white text-sm font-semibold">Where does it stop?</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">The non-negotiable base cases preventing infinite loops.</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-4 transition hover:translate-x-2 duration-200">
+                <span class="flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold text-xs h-6 w-6 rounded-full shrink-0">3</span>
+                <div>
+                  <h4 class="text-white text-sm font-semibold">What smaller questions does it ask?</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Expressing larger problem inputs via reduced inputs.</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-4 transition hover:translate-x-2 duration-200">
+                <span class="flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold text-xs h-6 w-6 rounded-full shrink-0">4</span>
+                <div>
+                  <h4 class="text-white text-sm font-semibold">How does the answer come back?</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">The mechanics of the call stack returning results upwards.</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-4 transition hover:translate-x-2 duration-200">
+                <span class="flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold text-xs h-6 w-6 rounded-full shrink-0">5</span>
+                <div>
+                  <h4 class="text-white text-sm font-semibold">Which calls repeat?</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Recognizing duplicates—the seed for future dynamic programming.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <aside class="notes">
+          Today's goal was not speed. Today's goal was clarity. If we cannot explain what a recursive function means, we are not ready to optimize it. This aligns with the Day 1 goal: establishing meaning, base cases, choice pathways, and identifying overlapping operations before introducing memory caches.
+        </aside>
+      </section>
+
+      <!-- Slide 2: The Most Important Observation (Featuring Live Tree Interactive!) -->
+      <section data-auto-animate data-background-transition="zoom" class="flex flex-col justify-center px-12">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full py-4">
+          <div class="lg:col-span-4 space-y-6">
+            <span class="text-xs font-bold tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 inline-block">The Major Problem</span>
+            <h1 class="text-4xl lg:text-5xl font-black text-white leading-tight" data-id="main-title">
+              Correct Recursion Can Still Be <br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Wasteful</span>
+            </h1>
+            <p class="text-sm text-gray-300 leading-relaxed">
+              A recursive solution can be mathematically flawless... yet terribly inefficient. Why? Because the machine asks the <span class="text-amber-400 font-semibold underline">exact same question</span> over and over.
+            </p>
+            <div class="pt-2">
+              <button onclick="highlightDuplicates()" class="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-extrabold text-xs px-5 py-3 rounded-xl transition-all shadow-lg hover:shadow-amber-500/20 flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
+                Highlight Overlapping Subproblems
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Visualization Container -->
+          <div class="lg:col-span-8 glass-card p-6 h-[460px] flex flex-col justify-between relative overflow-hidden" data-id="content-box">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl"></div>
+            
+            <div class="flex justify-between items-center border-b border-white/5 pb-3">
+              <span class="text-xs text-gray-400 font-mono flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span> Live Code Trace Sandbox
+              </span>
+              <span class="text-xs text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded">Fibonacci Tree f(4)</span>
+            </div>
+
+            <!-- Handcrafted CSS Tree Map -->
+            <div class="flex-grow flex items-center justify-center select-none scale-90 md:scale-100 origin-center">
+              <div class="flex flex-col items-center w-full">
+                <!-- Level 0 -->
+                <div class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-4 py-2 rounded-xl font-bold shadow-md z-10">
+                  f(4)
+                </div>
+                
+                <!-- Connector Level 0 to 1 -->
+                <div class="w-1/2 h-4 border-t border-x border-white/20 -mt-px mb-1 rounded-t-lg"></div>
+
+                <!-- Level 1 -->
+                <div class="grid grid-cols-2 gap-32 w-full text-center">
+                  <div class="flex flex-col items-center">
+                    <div class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-4 py-2 rounded-xl font-bold shadow-md z-10">
+                      f(3)
+                    </div>
+                    <!-- Connector Level 1 to 2 Left -->
+                    <div class="w-3/4 h-4 border-t border-x border-white/20 -mt-px mb-1 rounded-t-lg"></div>
+                    <!-- Level 2 Left Subgrid -->
+                    <div class="grid grid-cols-2 gap-12 w-full text-center">
+                      <div class="flex flex-col items-center">
+                        <div id="dup-f2-1" class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-3 py-1.5 rounded-xl font-bold shadow-sm text-xs z-10">
+                          f(2)
+                        </div>
+                        <div class="w-full h-3 border-t border-x border-white/20 -mt-px mb-1 rounded-t-sm"></div>
+                        <div class="grid grid-cols-2 gap-2 w-full text-center">
+                          <div id="dup-f1-1" class="tree-node bg-slate-800 border border-white/5 text-gray-300 font-mono p-1 rounded-lg text-[10px] z-10">
+                            f(1)
+                          </div>
+                          <div id="dup-f0-1" class="tree-node bg-slate-800 border border-white/5 text-gray-300 font-mono p-1 rounded-lg text-[10px] z-10">
+                            f(0)
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex flex-col items-center">
+                        <div id="dup-f1-2" class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-3 py-1.5 rounded-xl font-bold shadow-sm text-xs z-10">
+                          f(1)
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col items-center">
+                    <div id="dup-f2-2" class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-4 py-2 rounded-xl font-bold shadow-md z-10">
+                      f(2)
+                    </div>
+                    <!-- Connector Level 1 to 2 Right -->
+                    <div class="w-3/4 h-4 border-t border-x border-white/20 -mt-px mb-1 rounded-t-lg"></div>
+                    <!-- Level 2 Right Subgrid -->
+                    <div class="grid grid-cols-2 gap-12 w-full text-center">
+                      <div id="dup-f1-3" class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-3 py-1.5 rounded-xl font-bold shadow-sm text-xs z-10">
+                        f(1)
+                      </div>
+                      <div id="dup-f0-2" class="tree-node bg-slate-800 border border-white/10 text-white font-mono px-3 py-1.5 rounded-xl font-bold shadow-sm text-xs z-10">
+                        f(0)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-amber-500/5 rounded-xl border border-amber-500/10 p-3 flex justify-between items-center text-xs">
+              <p class="text-amber-200">
+                Notice: <code class="bg-amber-950 px-1.5 py-0.5 rounded text-amber-400 font-mono">f(2)</code>, <code class="bg-amber-950 px-1.5 py-0.5 rounded text-amber-400 font-mono">f(1)</code>, and <code class="bg-amber-950 px-1.5 py-0.5 rounded text-amber-400 font-mono">f(0)</code> are fully redundant sub-trees.
+              </p>
+              <span id="stat-indicator" class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Idle State</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="notes">
+          Today we only observed this repetition. We are not fixing it yet. We are simply noticing: the same question appears multiple times. This is the perfect bridge into Day 2's cache-key thinking and repeated-subproblem optimization.
+        </aside>
+      </section>
+
+      <!-- Slide 3: Tomorrow's Question -->
+      <section data-auto-animate data-background-transition="zoom" class="flex flex-col justify-center px-12">
+        <div class="max-w-5xl mx-auto space-y-8 py-8">
+          <div class="text-center space-y-3">
+            <span class="text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/20 inline-block">Looking Ahead</span>
+            <h1 class="text-5xl font-black text-white" data-id="main-title">
+              Tomorrow: Can We <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Avoid</span> Repeating Work?
+            </h1>
+            <p class="text-gray-400 text-sm max-w-2xl mx-auto">
+              If the exact same question is encountered twice... does the computer have to recompile, recalculate, and walk the stack all over again?
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full pt-4">
+            <!-- Option A: The Slow Way -->
+            <div class="glass-card p-6 relative border-red-500/20 hover:border-red-500/40 transition duration-300">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="p-2 bg-red-500/10 rounded-lg text-red-400">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                </span>
+                <h3 class="text-white text-lg font-bold">Standard Recursive Execution</h3>
+              </div>
+              <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                The recursive calls branch infinitely outwards. Time complexity grows exponentially. The machine blindly recompute values it solved milliseconds ago.
+              </p>
+              <div class="flex items-center gap-2 text-xs font-mono text-red-400 bg-red-500/5 p-2 rounded">
+                <span>Complexity: O(2ⁿ) — "The Brutal Way"</span>
+              </div>
+            </div>
+
+            <!-- Option B: The Intelligent Way -->
+            <div class="glass-card p-6 relative border-emerald-500/20 hover:border-emerald-500/40 transition duration-300">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </span>
+                <h3 class="text-white text-lg font-bold">The Memory-First Blueprint</h3>
+              </div>
+              <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                Before computing a tree node, check a fast lookup index. If the answer is there, instantly return it. Otherwise, compute it, store it, and move on.
+              </p>
+              <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/5 p-2 rounded">
+                <span>Complexity: O(n) — "The Intelligent Way"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="notes">
+          Tomorrow, we keep the same recursive thinking. But we add one new idea: if a question was already solved, we should not solve it again. Tomorrow, we move from raw stack recursion to memoization, highlighting state changes, overlapping subproblems, and cache keys.
+        </aside>
+      </section>
+
+      <!-- Slide 4: Do Not Reveal Names Yet -->
+      <section data-auto-animate data-background-transition="zoom" class="flex flex-col justify-center px-12">
+        <div class="max-w-4xl mx-auto space-y-8 py-8">
+          <div class="space-y-4">
+            <span class="text-xs font-bold tracking-widest text-teal-400 uppercase bg-teal-500/10 px-3 py-1.5 rounded-full border border-teal-500/20 inline-block">Our Teaching Philosophy</span>
+            <h1 class="text-5xl font-black text-white" data-id="main-title">
+              Concept First, <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Name Later</span>
+            </h1>
+            <p class="text-gray-400 text-sm">
+              Do not get caught up in intimidating academic terminology. Memorizing a label does not mean you understand the engineering.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass-card p-5 text-center transition hover:-translate-y-1 duration-200">
+              <div class="text-3xl font-black text-emerald-400 mb-1">Q</div>
+              <div class="text-white font-bold text-sm">Same Question</div>
+              <p class="text-[10px] text-gray-500 mt-1">Identical subproblem input parameter</p>
+            </div>
+            <div class="glass-card p-5 text-center transition hover:-translate-y-1 duration-200">
+              <div class="text-3xl font-black text-emerald-400 mb-1">A</div>
+              <div class="text-white font-bold text-sm">Same Answer</div>
+              <p class="text-[10px] text-gray-500 mt-1">Consistent deterministic outcome</p>
+            </div>
+            <div class="glass-card p-5 text-center transition hover:-translate-y-1 duration-200">
+              <div class="text-3xl font-black text-amber-400 mb-1">💾</div>
+              <div class="text-white font-bold text-sm">Remember It</div>
+              <p class="text-[10px] text-gray-500 mt-1">Caching calculations in state arrays</p>
+            </div>
+            <div class="glass-card p-5 text-center transition hover:-translate-y-1 duration-200">
+              <div class="text-3xl font-black text-cyan-400 mb-1">🔄</div>
+              <div class="text-white font-bold text-sm">Reuse It</div>
+              <p class="text-[10px] text-gray-500 mt-1">Direct O(1) index query retrieval</p>
+            </div>
+          </div>
+
+          <p class="text-center text-xs text-gray-500 font-mono italic">
+            "Formal textbook definitions and algorithms will naturally click once these mental pathways are solid."
+          </p>
+        </div>
+
+        <aside class="notes">
+          Do not worry about terminology now. First understand the structural pattern. Once the flow of asking and caching is clear, learning the vocabulary is effortless. Let's make sure our students see logic visually before they get flooded with definitions.
+        </aside>
+      </section>
+
+      <!-- Slide 5: Closing Line -->
+      <section data-auto-animate data-background-transition="zoom" class="flex flex-col justify-center px-12">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full py-8">
+          <div class="space-y-6">
+            <span class="text-xs font-bold tracking-widest text-rose-400 uppercase bg-rose-500/10 px-3 py-1.5 rounded-full border border-rose-500/20 inline-block">Final Thought</span>
+            <h1 class="text-6xl font-black text-white leading-none" data-id="main-title">
+              The <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">Core</span> Takeaway
+            </h1>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              If there is only one singular framework you take from today's lecture into tonight's mental processing, let it be this transition:
+            </p>
+          </div>
+
+          <div class="glass-card p-8 space-y-6 relative border-indigo-500/20" data-id="content-box">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
+            
+            <div class="space-y-2">
+              <div class="text-xs uppercase font-mono tracking-widest text-emerald-400">TODAY</div>
+              <blockquote class="text-xl md:text-2xl font-bold text-white border-l-4 border-emerald-500 pl-4 py-1 italic">
+                "We taught recursion how to ask."
+              </blockquote>
+            </div>
+
+            <div class="space-y-2">
+              <div class="text-xs uppercase font-mono tracking-widest text-amber-400">TOMORROW</div>
+              <blockquote class="text-xl md:text-2xl font-bold text-white border-l-4 border-amber-500 pl-4 py-1 italic">
+                "We teach recursion how not to forget."
+              </blockquote>
+            </div>
+          </div>
+        </div>
+
+        <aside class="notes">
+          This is the only takeaway I want you to carry: recursion asks questions. Tomorrow, recursion starts remembering answers. Day 1 builds only the recursion needed for DP, and Day 2 moves fast from recursion to memoization thinking. See you tomorrow.
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js JS Core + Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+  
+  <script>
+    // ----------------------------------------------------
+    // Slide Delivery Scripts (Mapped to current slide index)
+    // ----------------------------------------------------
+    const scriptMap = {
+      0: `<strong>Today we did not try to learn recursion to become speed-optimizers.</strong><br><br>We learned recursion because all complex dynamic problems ask us to explicitly master 5 specific concepts: What does it mean? Where does it stop? What smaller questions are asked? How do results climb back up? And where does the repetition live? Today is about establishing meaning.`,
+      1: `<strong>This is the core observation. Pay close attention to the visual simulation.</strong><br><br>Look at the Fibonacci recursive tree for f(4). When you click the <em>Highlight</em> button, you'll see f(2) and f(1) light up in orange. We did not write wrong logic. The logic is mathematically correct. But why does the CPU have to re-evaluate the exact same f(2) sub-tree twice? Today we only spot this repetition. We do not fix it yet.`,
+      2: `<strong>Tomorrow's core question changes how we deal with state.</strong><br><br>If we know f(2) returns 1, should our programs waste cycles re-solving it down to its base cases? Or should we allocate a sliver of space to remember the answer? This one thought shift pivots us from exponential O(2^N) brute force execution straight to high-speed O(N) optimized code.`,
+      3: `<strong>Dynamic programming has intimidating names, but names don't write code.</strong><br><br>Our framework is: 'Concept First, Name Later.' If you understand how a repeated query (the Same Question) leads to a predictable result (the Same Answer) and how we memoize it (Remember It) and query it (Reuse It), you already know the engineering. The formal terms will resolve naturally later.`,
+      4: `<strong>Here is your absolute singular takeaway for the night.</strong><br><br>Today, we taught recursion how to ask. Tomorrow, we teach recursion how not to forget. Wrap your head around how the call stack branches, and tomorrow we'll turn those duplicates into instant lookup operations.`
+    };
+
+    // Initialize Reveal.js
+    let deck = new Reveal();
+    deck.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      transition: 'convex', // Elegant 3D spatial slide transition
+      transitionSpeed: 'default',
+      backgroundTransition: 'fade',
+      autoAnimate: true,
+      autoAnimateDuration: 1.0,
+      autoAnimateEasing: 'ease-out'
+    });
+
+    // Update script panel on slide change
+    deck.on('slidechanged', event => {
+      updateScript(event.indexh);
+    });
+
+    // Initial state set
+    window.onload = function() {
+      updateScript(0);
+    };
+
+    function updateScript(index) {
+      const scriptBox = document.getElementById('script-content');
+      if (scriptMap[index]) {
+        scriptBox.innerHTML = scriptMap[index];
+      } else {
+        scriptBox.innerHTML = `No script notes available for this section. Ready to lecture!`;
+      }
+    }
+
+    // Toggle Script HUD Panel
+    function toggleScript() {
+      const overlay = document.getElementById('script-overlay');
+      const isHidden = overlay.classList.contains('opacity-0');
+      if (isHidden) {
+        overlay.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-full');
+        overlay.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        overlay.classList.add('opacity-0', 'pointer-events-none', 'translate-y-full');
+        overlay.classList.remove('opacity-100', 'translate-y-0');
+      }
+    }
+
+    // Bind hotkey 'H' to toggle presenter overlay script
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') {
+        toggleScript();
+      }
+    });
+
+    // Interactive Recursion Node Highlight Logic for Slide 2
+    let highlighted = false;
+    function highlightDuplicates() {
+      const targetIds = ['dup-f2-1', 'dup-f2-2', 'dup-f1-1', 'dup-f1-2', 'dup-f1-3', 'dup-f0-1', 'dup-f0-2'];
+      const btn = document.querySelector('button[onclick="highlightDuplicates()"]');
+      const stat = document.getElementById('stat-indicator');
+
+      if (!highlighted) {
+        targetIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('duplicate-highlight');
+        });
+        btn.innerHTML = `
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+          Reset Simulation
+        `;
+        stat.innerText = 'Duplicate nodes highlighting active!';
+        stat.classList.remove('text-gray-500');
+        stat.classList.add('text-amber-400', 'animate-pulse');
+        highlighted = true;
+      } else {
+        targetIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('duplicate-highlight');
+        });
+        btn.innerHTML = `
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
+          Highlight Overlapping Subproblems
+        `;
+        stat.innerText = 'Idle State';
+        stat.classList.remove('text-amber-400', 'animate-pulse');
+        stat.classList.add('text-gray-500');
+        highlighted = false;
+      }
+    }
+  </script>
+</body>
+</html>
