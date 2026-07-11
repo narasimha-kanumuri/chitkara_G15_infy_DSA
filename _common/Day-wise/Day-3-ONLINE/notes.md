@@ -1,6 +1,20 @@
 ## Time, Space, Auxillary
 
 
+- [Complexities](#complexities)
+  - [Nested](#nested)
+  - [Complexities](#complexities-1)
+  - [Growth Types](#growth-types)
+  - [Assignments](#assignments)
+- [BEST / AVG / WORST](#best--avg--worst)
+  - [Complexity Examples](#complexity-examples)
+  - [Constants in Complexity Equations](#constants-in-complexity-equations)
+  - [Ignoring lower order terms in Complexity Equations](#ignoring-lower-order-terms-in-complexity-equations)
+  - [Complexity Equations](#complexity-equations)
+  - [When not to ignore constants and lower order terms in complexity equations](#when-not-to-ignore-constants-and-lower-order-terms-in-complexity-equations)
+  - [When not to take which type of complexity](#when-not-to-take-which-type-of-complexity)
+  - [Better Complexity](#better-complexity)
+  - [Build Equations (Recursion)](#build-equations-recursion)
 
 
 1. Speed
